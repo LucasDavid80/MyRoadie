@@ -1,103 +1,100 @@
+import 'package:agenda_musical/domain/models/event_model.dart';
 import 'package:agenda_musical/presentation/screens/principal/widgets/commitments_widget.dart';
 import 'package:agenda_musical/presentation/screens/principal/widgets/custom_calendar.dart';
 import 'package:agenda_musical/presentation/screens/principal/widgets/header_widget.dart';
 import 'package:agenda_musical/presentation/screens/principal/widgets/infos_widget.dart';
+import 'package:agenda_musical/presentation/widgets/my_roadie_app_bar.dart';
+import 'package:agenda_musical/presentation/widgets/new_appointment_widget.dart'; // Importe o modal
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
 
-class PrincipalScreen extends StatelessWidget {
+// 1. Mudamos para StatefulWidget para poder atualizar a lista
+class PrincipalScreen extends StatefulWidget {
   const PrincipalScreen({super.key});
 
   @override
+  State<PrincipalScreen> createState() => _PrincipalScreenState();
+}
+
+class _PrincipalScreenState extends State<PrincipalScreen> {
+  // 1. A lista agora é tipada! Adeus Map<String, dynamic>
+  List<EventModel> events = [
+    EventModel(
+      id: '1',
+      title: "Carnaval cxb",
+      startTime: "19:00",
+      endTime: "21:00",
+      location: "Calçadão",
+      fee: 3000.0,
+      date: DateTime(2026, 2, 12),
+      type: "Show",
+    ),
+  ];
+
+  // 2. Função de adicionar recebe o objeto
+  void _addNewEvent(EventModel newEvent) {
+    setState(() {
+      events.add(newEvent);
+    });
+  }
+
+  // 3. Cálculos muito mais seguros (sem ['fee'] que pode dar erro)
+  double calcFee() {
+    // fold é um jeito chique de somar lista
+    return events.fold(0.0, (sum, event) => sum + event.fee);
+  }
+
+  int calcShows() {
+    final now = DateTime.now();
+    // Olha como ficou legível acessar .date e .month!
+    return events
+        .where(
+          (event) =>
+              event.date.month == now.month && event.date.year == now.year,
+        )
+        .length;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    // Adicionei datas diferentes para testar o agrupamento
-    final List<Map<String, dynamic>> events = [
-      {
-        "title": "Carnaval cxb",
-        "initialTime": "19:00",
-        "finalTime": "21:00",
-        "location": "Calçadão",
-        "fee": 3000.0,
-        "date": "2026-02-12", // Quinta
-        "type": "Show",
-      },
-      {
-        "title": "Show na Praça",
-        "initialTime": "21:00",
-        "finalTime": "00:00",
-        "location": "Calçadão",
-        "fee": 3000.0,
-        "date": "2026-02-15", // Domingo
-        "type": "Ensaio",
-      },
-    ];
+    // Função para lidar com salvar (Novo ou Edição)
+    void _handleEvent(EventModel eventData) {
+      setState(() {
+        // Procura se já existe um evento com esse ID na lista
+        final index = events.indexWhere((e) => e.id == eventData.id);
 
-    double calcFee(dynamic fee) {
-      double cacheTotal = 0.0;
-
-      for (var event in events) {
-        cacheTotal += event['fee'];
-      }
-
-      return cacheTotal;
-    }
-
-    int totalCompromissos = events.length;
-
-    int calcShows() {
-      int showsMonth = 0;
-      DateTime now = DateTime.now();
-      for (var event in events) {
-        // Percorre todos os eventos
-        DateTime eventDate = DateTime.parse(
-          event['date'],
-        ); // Converte a string para DateTime
-        if (eventDate.month == now.month && eventDate.year == now.year) {
-          // Verifica se o evento é do mês atual
-          showsMonth++;
+        if (index != -1) {
+          // Se achou (index diferente de -1), é EDIÇÃO: substitui o antigo pelo novo
+          events[index] = eventData;
+        } else {
+          // Se não achou, é NOVO: adiciona na lista
+          events.add(eventData);
         }
-      }
-      return showsMonth;
+      });
     }
 
     return Scaffold(
-      appBar: AppBar(
-        leading: SvgPicture.asset(
-          'assets/images/logo.svg',
-          width: 100, // Defina o tamanho que quiser
-          height: 100,
-        ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          spacing: 8.0,
-          children: [
-            IconButton(
-              icon: Icon(Icons.calendar_today, color: Color(0xFFf59e0b)),
-              onPressed: () {
-                // Ação do calendário
-                // Navega para a tela do calendário ou página principal
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.person),
-              onPressed: () {
-                // Ação do calendário
-                // Navega para a tela de Perfil do Usuário
-              },
-            ),
-            const SizedBox(
-              height: 40, // Define a altura da barra
-              child: VerticalDivider(
-                color: Colors.grey,
-                thickness: 2, // Espessura da linha
-                indent: 5, // Espaço no topo
-                endIndent: 5, // Espaço na base
+      appBar: const MyRoadieAppBar(selectedScreen: 'calendar'),
+
+      // 4. Botão Flutuante para Adicionar
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xFFf59e0b), // Laranja
+        child: const Icon(Icons.add, color: Colors.white),
+        onPressed: () {
+          // Abre o Modal como Dialog
+          showDialog(
+            context: context,
+            builder: (context) => Dialog(
+              backgroundColor: Colors.transparent,
+              insetPadding: const EdgeInsets.all(16),
+              child: NewAppointmentWidget(
+                event: null, // Opcional, pode nem passar esse parâmetro
+                onConfirm: _handleEvent, // Usa a mesma função
               ),
             ),
-            Icon(Icons.logout),
-          ],
-        ),
+          );
+        },
       ),
+
       body: SingleChildScrollView(
         child: Column(
           spacing: 8,
@@ -108,19 +105,30 @@ class PrincipalScreen extends StatelessWidget {
                   bottom: BorderSide(color: Colors.grey.shade300, width: 1.0),
                 ),
               ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: const Padding(
+                padding: EdgeInsets.symmetric(vertical: 16.0),
                 child: HeaderWidget(),
               ),
             ),
+
+            // Os Widgets agora recebem os dados atualizados automaticamente
             InfosWidget(
-              compromissosTotal: totalCompromissos,
+              compromissosTotal: events.length,
               compromissosConcluidos: 0,
               shows: calcShows(),
-              faturamento: calcFee(0.0),
+              faturamento: calcFee(),
             ),
-            CustomCalendar(),
-            CommitmentsWidget(commitments: events),
+
+            CustomCalendar(events: events),
+
+            // A lista de cards atualiza quando 'events' muda
+            CommitmentsWidget(
+              commitments: events,
+              onConfirm: _handleEvent, // Usa a mesma função
+            ),
+
+            // Espaço extra pro botão flutuante não tampar o último card
+            const SizedBox(height: 80),
           ],
         ),
       ),
