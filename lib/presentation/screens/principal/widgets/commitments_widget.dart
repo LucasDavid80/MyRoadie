@@ -1,16 +1,29 @@
+import 'package:agenda_musical/domain/models/event_model.dart';
+import 'package:agenda_musical/presentation/widgets/new_appointment_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart'; // Necessário para formatar a data (adicione no pubspec.yaml)
 import 'package:intl/date_symbol_data_local.dart'; // Para carregar o pt_BR
 
 class CommitmentsWidget extends StatefulWidget {
-  final List<Map<String, dynamic>> commitments;
-  const CommitmentsWidget({super.key, required this.commitments});
+  final List<EventModel> commitments;
+  final Function(EventModel) onConfirm;
+  const CommitmentsWidget({
+    super.key,
+    required this.commitments,
+    required this.onConfirm,
+  });
 
   @override
   State<CommitmentsWidget> createState() => _CommitmentsWidgetState();
 }
 
 class _CommitmentsWidgetState extends State<CommitmentsWidget> {
+  // --- 1. Controladores (Para pegar o texto digitado) ---
+  final _titleController = TextEditingController();
+  final _locationController = TextEditingController();
+  final _cacheController = TextEditingController();
+  final _notesController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
@@ -19,9 +32,19 @@ class _CommitmentsWidgetState extends State<CommitmentsWidget> {
   }
 
   @override
+  void dispose() {
+    // É boa prática limpar os controladores ao fechar a tela
+    _titleController.dispose();
+    _locationController.dispose();
+    _cacheController.dispose();
+    _notesController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     // 1. Ordenar a lista por data para garantir que o agrupamento funcione
-    widget.commitments.sort((a, b) => a['date'].compareTo(b['date']));
+    widget.commitments.sort((a, b) => a.date.compareTo(b.date));
 
     return Card(
       elevation:
@@ -68,8 +91,7 @@ class _CommitmentsWidgetState extends State<CommitmentsWidget> {
                 showHeader = true;
               } else {
                 // Se a data deste item for diferente do anterior, mostra cabeçalho
-                if (commitment['date'] !=
-                    widget.commitments[index - 1]['date']) {
+                if (commitment.date != widget.commitments[index - 1].date) {
                   showHeader = true;
                 }
               }
@@ -81,7 +103,7 @@ class _CommitmentsWidgetState extends State<CommitmentsWidget> {
                     Padding(
                       padding: const EdgeInsets.only(top: 16.0, bottom: 8.0),
                       child: Text(
-                        _formatDateTitle(commitment['date']),
+                        _formatDateTitle(commitment.date.toIso8601String()),
                         style: TextStyle(
                           color: Colors.grey[600],
                           fontWeight: FontWeight.w600,
@@ -89,13 +111,7 @@ class _CommitmentsWidgetState extends State<CommitmentsWidget> {
                         ),
                       ),
                     ),
-                  _commitmentCard(
-                    commitment["title"],
-                    commitment["initialTime"],
-                    commitment["finalTime"],
-                    commitment["location"],
-                    commitment["fee"],
-                  ),
+                  _commitmentCard(commitment),
                 ],
               );
             },
@@ -114,13 +130,7 @@ class _CommitmentsWidgetState extends State<CommitmentsWidget> {
     return formatted[0].toUpperCase() + formatted.substring(1);
   }
 
-  Widget _commitmentCard(
-    String title,
-    String initialTime,
-    String finalTime,
-    String location,
-    double fee,
-  ) {
+  Widget _commitmentCard(EventModel event) {
     return Container(
       // Padding interno reduzido para ficar compacto como na foto
       padding: const EdgeInsets.all(12.0),
@@ -169,7 +179,7 @@ class _CommitmentsWidgetState extends State<CommitmentsWidget> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
-                  widget.commitments.first['type'],
+                  widget.commitments.first.type,
                   style: TextStyle(
                     fontSize: 12, // CORRIGIDO: 24 era muito grande
                     fontWeight: FontWeight.bold,
@@ -180,7 +190,34 @@ class _CommitmentsWidgetState extends State<CommitmentsWidget> {
 
               const Spacer(), // Empurra os ícones de edição para a direita
 
-              Icon(Icons.edit_outlined, size: 28, color: Colors.blueGrey[400]),
+              IconButton(
+                icon: const Icon(
+                  Icons.edit_outlined,
+                  size: 28,
+                  color: Colors.blueGrey,
+                ),
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => Dialog(
+                      backgroundColor: Colors.transparent,
+                      insetPadding: const EdgeInsets.all(16),
+                      child: NewAppointmentWidget(
+                        event:
+                            event, // <--- CORREÇÃO: Passa o evento atual que veio por parâmetro
+                        onConfirm: (eventoEditado) {
+                          // Passa para cima (PrincipalScreen) resolver
+                          widget.onConfirm(eventoEditado);
+                        },
+                      ),
+                    ),
+                  );
+
+                  // Fecha o modal
+                  // context.pop();
+                  // Futuro: Salvar no Firebase
+                },
+              ),
               const SizedBox(width: 16),
               Icon(Icons.delete_outline, size: 28, color: Colors.blueGrey[400]),
             ],
@@ -192,7 +229,7 @@ class _CommitmentsWidgetState extends State<CommitmentsWidget> {
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              title,
+              event.title,
               style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -203,13 +240,16 @@ class _CommitmentsWidgetState extends State<CommitmentsWidget> {
           const SizedBox(height: 8),
 
           // Informações (Hora, Local, Preço)
-          _buildInfoRow(Icons.schedule, "$initialTime - $finalTime"),
+          _buildInfoRow(
+            Icons.schedule,
+            "${event.startTime} - ${event.endTime}",
+          ),
           const SizedBox(height: 4),
-          _buildInfoRow(Icons.location_on_outlined, location),
+          _buildInfoRow(Icons.location_on_outlined, event.location),
           const SizedBox(height: 4),
           _buildInfoRow(
             Icons.attach_money,
-            "R\$ ${fee.toStringAsFixed(2)}",
+            "R\$ ${event.fee.toStringAsFixed(2)}",
             textColor: Colors.teal, // Cor verde do dinheiro
           ),
         ],
