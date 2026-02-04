@@ -1,6 +1,7 @@
 import 'package:agenda_musical/presentation/screens/person/widgets/info_widget.dart';
 import 'package:agenda_musical/presentation/screens/person/widgets/multi_selection_widget.dart';
 import 'package:agenda_musical/presentation/screens/person/widgets/photo_widget.dart';
+import 'package:agenda_musical/presentation/widgets/my_roadie_app_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
@@ -46,35 +47,7 @@ class PersonScreen extends StatelessWidget {
     ];
 
     return Scaffold(
-      appBar: AppBar(
-        leading: Padding(
-          // Adicionei um Padding para o logo não colar na borda
-          padding: const EdgeInsets.all(8.0),
-          child: SvgPicture.asset('assets/images/logo.svg'),
-        ),
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            // Removi o spacing: 8.0 (disponível apenas em versões muito novas do Flutter, troquei por SizedBox)
-            IconButton(
-              icon: const Icon(Icons.calendar_today),
-              onPressed: () {},
-            ),
-            const SizedBox(width: 8),
-            IconButton(
-              icon: const Icon(Icons.person, color: Color(0xFFf59e0b)),
-              onPressed: () {},
-            ),
-            const SizedBox(width: 8),
-            const SizedBox(
-              height: 24, // Altura ajustada para o divisor
-              child: VerticalDivider(color: Colors.grey, thickness: 1),
-            ),
-            const SizedBox(width: 8),
-            const Icon(Icons.logout),
-          ],
-        ),
-      ),
+      appBar: const MyRoadieAppBar(selectedScreen: 'profile'),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(
           bottom: 40,
