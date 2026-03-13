@@ -1,3 +1,6 @@
+import 'package:agenda_musical/core/constants/app_colors.dart';
+import 'package:agenda_musical/core/constants/app_strings.dart';
+import 'package:agenda_musical/presentation/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 
 class InfoWidget extends StatelessWidget {
@@ -9,7 +12,7 @@ class InfoWidget extends StatelessWidget {
       margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.background,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
@@ -36,102 +39,57 @@ class InfoWidget extends StatelessWidget {
           const SizedBox(height: 24.0),
 
           // Campos do formulário usando o método auxiliar
-          _buildCustomField(
-            label: 'Nome Artístico *',
-            hint: 'Lucas David Oliveira',
+          CustomTextField(
+            label: AppStrings.labelArtistName,
+            hint: AppStrings.hintArtistName,
+            isRequired: true,
+            onChanged: (val) => print(val),
           ),
 
-          _buildCustomField(
-            label: 'Anos de Experiência',
-            hint: 'Ex: 10',
+          CustomTextField(
+            label: AppStrings.labelExperience,
+            hint: AppStrings.hintExperience,
             keyboardType: TextInputType.number,
           ),
 
-          _buildCustomField(
-            label: 'Telefone/WhatsApp *',
-            hint: '(11) 99999-9999',
+          CustomTextField(
+            label: AppStrings.labelPhone,
+            hint: AppStrings.hintPhone,
             keyboardType: TextInputType.phone,
           ),
 
-          _buildCustomField(label: 'Instagram', hint: '@seuinstagram'),
-
-          _buildCustomField(label: 'Cidade *', hint: 'São Paulo'),
-
-          _buildCustomField(label: 'Estado *', hint: 'SP'),
-
-          _buildCustomField(
-            label: 'Cachê Mínimo (R\$)',
-            hint: '500',
-            keyboardType: TextInputType.number,
-          ),
-
-          _buildCustomField(
-            label: 'Link do Vídeo (YouTube)',
-            hint: 'https://youtube.com/...',
+          CustomTextField(
+            label: AppStrings.labelInstagram,
+            hint: AppStrings.hintInstagram,
             keyboardType: TextInputType.url,
           ),
 
-          _buildCustomField(
-            label: 'Biografia *',
-            hint:
-                'Conte sobre sua trajetória musical, experiência e diferenciais...',
-            maxLines: 4, // Caixa maior para biografia
+          CustomTextField(
+            label: AppStrings.labelCity,
+            hint: AppStrings.hintCity,
           ),
-        ],
-      ),
-    );
-  }
 
-  // Método auxiliar para criar os campos padronizados
-  Widget _buildCustomField({
-    required String label,
-    required String hint,
-    int maxLines = 1,
-    TextInputType keyboardType = TextInputType.text,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // 1. O Rótulo (Label) fora da caixa
-          Text(
-            label,
-            style: const TextStyle(
-              fontWeight: FontWeight.w600, // Semi-negrito
-              fontSize: 14,
-              color: Colors.black87,
-            ),
+          CustomTextField(
+            label: AppStrings.labelState,
+            hint: AppStrings.hintState,
           ),
-          const SizedBox(height: 8.0), // Espaço entre o rótulo e o input
-          // 2. O Campo de Texto
-          TextField(
-            maxLines: maxLines,
-            keyboardType: keyboardType,
-            style: const TextStyle(fontSize: 14),
-            decoration: InputDecoration(
-              hintText: hint, // Texto de exemplo cinza
-              hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 12,
-                vertical: 14,
-              ),
-              // Borda quando não está focado (Cinza clarinho)
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(
-                  6,
-                ), // Borda levemente arredondada
-                borderSide: BorderSide(color: Colors.grey.shade300),
-              ),
-              // Borda quando clicado (Azul ou a cor primária do app)
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(6),
-                borderSide: const BorderSide(color: Colors.blue, width: 1.5),
-              ),
-              isDense: true,
-              filled: true,
-              fillColor: Colors.white,
-            ),
+
+          CustomTextField(
+            label: AppStrings.labelMinimumFee,
+            hint: AppStrings.hintMinimumFee,
+            keyboardType: TextInputType.number,
+          ),
+
+          CustomTextField(
+            label: AppStrings.labelVideoLink,
+            hint: AppStrings.hintVideoLink,
+            keyboardType: TextInputType.url,
+          ),
+
+          CustomTextField(
+            label: AppStrings.labelBio,
+            hint: AppStrings.hintBio,
+            maxLines: 4, // Caixa maior para biografia
           ),
         ],
       ),
