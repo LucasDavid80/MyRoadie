@@ -1,43 +1,45 @@
-class EventModel {
-  final String id; // Bom para identificar no Firebase depois
-  final String title;
-  final String type; // Show, Ensaio, etc.
-  final DateTime date;
-  final String startTime;
-  final String endTime;
-  final String location;
-  final double fee;
-  final String notes;
+// lib/data/models/event_model.dart
+import '../../domain/entities/event_entity.dart';
 
-  EventModel({
-    required this.id,
-    required this.title,
-    required this.type,
-    required this.date,
-    required this.startTime,
-    required this.endTime,
-    required this.location,
-    required this.fee,
-    this.notes = '',
+class EventModel extends EventEntity {
+  const EventModel({
+    required super.id,
+    required super.title,
+    required super.type,
+    required super.date,
+    required super.startTime,
+    required super.endTime,
+    required super.location,
+    required super.fee,
+    super.notes,
   });
 
-  // Construtor vazio para facilitar a criação inicial
-  factory EventModel.empty() {
+  // Aqui entra a mágica para o Banco Local / Firebase
+  factory EventModel.fromMap(Map<String, dynamic> map) {
     return EventModel(
-      id: '',
-      title: '',
-      type: '',
-      date: DateTime.now(),
-      startTime: '',
-      endTime: '',
-      location: '',
-      fee: 0.0,
-      notes: '',
+      id: map['id'] ?? '',
+      title: map['title'] ?? '',
+      type: map['type'] ?? '',
+      date: DateTime.parse(map['date']),
+      startTime: map['startTime'] ?? '',
+      endTime: map['endTime'] ?? '',
+      location: map['location'] ?? '',
+      fee: (map['fee'] as num).toDouble(),
+      notes: map['notes'] ?? '',
     );
   }
 
-  @override
-  String toString() {
-    return 'EventModel(id: $id, title: $title, type: $type, date: $date, startTime: $startTime, endTime: $endTime, location: $location, fee: $fee, notes: $notes)';
+  Map<String, dynamic> toMap() {
+    return {
+      'id': id,
+      'title': title,
+      'type': type,
+      'date': date.toIso8601String(),
+      'startTime': startTime,
+      'endTime': endTime,
+      'location': location,
+      'fee': fee,
+      'notes': notes,
+    };
   }
 }
