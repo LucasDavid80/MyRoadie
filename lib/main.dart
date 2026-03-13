@@ -1,12 +1,14 @@
+import 'package:agenda_musical/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:flutter_localizations/flutter_localizations.dart'; // Adicione este import
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:agenda_musical/core/router.dart';
 
 void main() {
   // Inicializa a formatação de data para o Brasil
   initializeDateFormatting('pt_BR', null).then((_) {
-    runApp(const MyApp());
+    runApp(const ProviderScope(child: MyApp()));
   });
 }
 
@@ -18,11 +20,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp.router(
       title: 'MyRoadie',
       debugShowCheckedModeBanner: false,
-
-      // Rotas
       routerConfig: router,
-
-      // Configuração de Idioma (Para o calendário ficar em PT-BR)
       locale: const Locale('pt', 'BR'),
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
@@ -31,27 +29,37 @@ class MyApp extends StatelessWidget {
       ],
       supportedLocales: const [Locale('pt', 'BR')],
 
-      // Tema Personalizado com as cores do MyRoadie
       theme: ThemeData(
         useMaterial3: true,
+        // Usamos as constantes de cor aqui
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFFf59e0b), // Laranja Principal
-          primary: const Color(0xFFf59e0b),
-          secondary: const Color(0xFF2c3e50), // Azul Escuro
-          background: Colors.white, // Fundo branco limpo
+          seedColor: AppColors.primary,
+          primary: AppColors.primary,
+          secondary: AppColors.secondary, // Aquele azul escuro que você tinha
+          surface: AppColors.background,
         ),
 
-        // Estilo padrão da AppBar
         appBarTheme: const AppBarTheme(
-          backgroundColor: Colors.white,
-          surfaceTintColor: Colors.transparent, // Remove o tint roxo do scroll
+          backgroundColor: AppColors.background,
+          surfaceTintColor: Colors.transparent,
           centerTitle: false,
           elevation: 0,
-          iconTheme: IconThemeData(color: Color(0xFF2c3e50)),
+          iconTheme: IconThemeData(color: AppColors.secondary),
+          titleTextStyle: TextStyle(
+            color: AppColors.secondary,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
         ),
 
-        // Estilo padrão dos Inputs (Bordas arredondadas)
+        // Centralizando o estilo dos Inputs para o App inteiro
         inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: AppColors.background,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 14,
+          ),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
@@ -59,8 +67,10 @@ class MyApp extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Color(0xFFf59e0b), width: 2),
+            borderSide: const BorderSide(color: AppColors.primary, width: 2),
           ),
+          labelStyle: const TextStyle(color: AppColors.textDark),
+          hintStyle: const TextStyle(color: AppColors.textGrey, fontSize: 14),
         ),
       ),
     );
