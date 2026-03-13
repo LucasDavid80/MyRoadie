@@ -1,6 +1,6 @@
+import 'package:agenda_musical/core/constants/app_colors.dart';
 import 'package:agenda_musical/presentation/screens/auth/widgets/login_form.dart';
 import 'package:agenda_musical/presentation/screens/auth/widgets/signup_bottom_sheet.dart';
-import 'package:agenda_musical/presentation/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -39,13 +39,7 @@ class _LoginPageState extends State<LoginPage> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              // Color(0xFF2c3e50), // Azul Escuro (AppColors.secondary)
-              // Color(0xFF000000), // Preto (para dar profundidade)
-              // OU se quiser Laranja:
-              Color(0xFFf59e0b), // Laranja
-              Color(0xFFD97706), // Laranja mais escuro
-            ],
+            colors: AppColors.primaryGradient,
           ),
         ),
         child: SingleChildScrollView(
@@ -89,7 +83,8 @@ class _LoginPageState extends State<LoginPage> {
                               // Padding externo se precisar separar de outros widgets
                               // margin: EdgeInsets.all(16),
                               decoration: BoxDecoration(
-                                color: Colors.white, // Cor de fundo do "card"
+                                color: AppColors
+                                    .background, // Cor de fundo do "card"
                                 borderRadius: BorderRadius.circular(
                                   12,
                                 ), // Arredondamento
@@ -169,7 +164,7 @@ class _LoginPageState extends State<LoginPage> {
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: AppColors.background,
                           ),
                         ),
                       ),
@@ -193,7 +188,7 @@ class _LoginPageState extends State<LoginPage> {
                       vertical: 32,
                     ),
                     decoration: BoxDecoration(
-                      color: Colors.white,
+                      color: AppColors.background,
                       borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(40),
                         topRight: Radius.circular(40),

@@ -1,3 +1,5 @@
+import 'package:agenda_musical/core/constants/app_colors.dart';
+import 'package:agenda_musical/domain/entities/event_entity.dart';
 import 'package:agenda_musical/domain/models/event_model.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -5,8 +7,9 @@ import 'package:intl/intl.dart'; // Para formatar a data
 
 class NewAppointmentWidget extends StatefulWidget {
   // 2. Mude o tipo da função de retorno
-  final Function(EventModel) onConfirm;
-  final EventModel? event; // <--- AGORA É OPCIONAL (Pode ser nulo se for criar)
+  final Function(EventEntity) onConfirm;
+  final EventEntity?
+  event; // <--- AGORA É OPCIONAL (Pode ser nulo se for criar)
 
   const NewAppointmentWidget({super.key, required this.onConfirm, this.event});
 
@@ -26,10 +29,6 @@ class _NewAppointmentWidgetState extends State<NewAppointmentWidget> {
   DateTime? _selectedDate;
   TimeOfDay? _startTime;
   TimeOfDay? _endTime;
-
-  // Cores (Poderiam estar no AppColors, mas mantive aqui por facilidade)
-  final Color primaryOrange = const Color(0xFFf59e0b);
-  final Color headerBlue = const Color(0xFF2c3e50);
 
   @override
   void initState() {
@@ -84,9 +83,9 @@ class _NewAppointmentWidgetState extends State<NewAppointmentWidget> {
       builder: (context, child) {
         // Customiza a cor do calendário para Laranja
         return Theme(
-          data: Theme.of(
-            context,
-          ).copyWith(colorScheme: ColorScheme.light(primary: primaryOrange)),
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(primary: AppColors.primary),
+          ),
           child: child!,
         );
       },
@@ -105,9 +104,9 @@ class _NewAppointmentWidgetState extends State<NewAppointmentWidget> {
       initialTime: TimeOfDay.now(),
       builder: (context, child) {
         return Theme(
-          data: Theme.of(
-            context,
-          ).copyWith(colorScheme: ColorScheme.light(primary: primaryOrange)),
+          data: Theme.of(context).copyWith(
+            colorScheme: ColorScheme.light(primary: AppColors.primary),
+          ),
           child: child!,
         );
       },
@@ -133,7 +132,7 @@ class _NewAppointmentWidgetState extends State<NewAppointmentWidget> {
           width: double.infinity,
           margin: const EdgeInsets.all(16),
           decoration: BoxDecoration(
-            color: Colors.white,
+            color: AppColors.background,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
@@ -154,7 +153,7 @@ class _NewAppointmentWidgetState extends State<NewAppointmentWidget> {
                   vertical: 12,
                 ),
                 decoration: BoxDecoration(
-                  color: headerBlue,
+                  color: AppColors.secondary,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(12),
                     topRight: Radius.circular(12),
@@ -162,12 +161,12 @@ class _NewAppointmentWidgetState extends State<NewAppointmentWidget> {
                 ),
                 child: Row(
                   children: [
-                    Icon(Icons.music_note, color: primaryOrange, size: 20),
+                    Icon(Icons.music_note, color: AppColors.primary, size: 20),
                     const SizedBox(width: 8),
                     Text(
                       isEditing ? 'Editar Compromisso' : 'Novo Compromisso',
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: AppColors.textLight,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
                       ),
@@ -177,7 +176,7 @@ class _NewAppointmentWidgetState extends State<NewAppointmentWidget> {
                       onTap: () => context.pop(),
                       child: const Icon(
                         Icons.close,
-                        color: Colors.grey,
+                        color: AppColors.textGrey,
                         size: 20,
                       ),
                     ),
@@ -398,7 +397,7 @@ class _NewAppointmentWidgetState extends State<NewAppointmentWidget> {
                                   _selectedDate == null)
                                 return;
 
-                              final newEvent = EventModel(
+                              final newEvent = EventEntity(
                                 // Se estiver editando, MANTÉM o ID original. Se for novo, gera um novo.
                                 id: isEditing
                                     ? widget.event!.id
@@ -427,7 +426,7 @@ class _NewAppointmentWidgetState extends State<NewAppointmentWidget> {
                               // Futuro: Salvar no Firebase
                             },
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: primaryOrange,
+                              backgroundColor: AppColors.primary,
                               padding: const EdgeInsets.symmetric(vertical: 16),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -439,7 +438,7 @@ class _NewAppointmentWidgetState extends State<NewAppointmentWidget> {
                                   ? 'Salvar Alterações'
                                   : 'Criar Compromisso',
                               style: const TextStyle(
-                                color: Colors.white,
+                                color: AppColors.textLight,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -470,7 +469,7 @@ class _NewAppointmentWidgetState extends State<NewAppointmentWidget> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
-        borderSide: BorderSide(color: primaryOrange, width: 2),
+        borderSide: BorderSide(color: AppColors.primary, width: 2),
       ),
     );
   }

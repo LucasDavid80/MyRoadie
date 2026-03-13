@@ -1,3 +1,4 @@
+import 'package:agenda_musical/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:go_router/go_router.dart';
@@ -15,14 +16,9 @@ class MyRoadieAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Definição de Cores (Pode vir do seu AppColors se preferir)
-    const Color activeColor = Color(0xFFf59e0b); // Laranja
-    const Color inactiveColor = Color(
-      0xFF2c3e50,
-    ); // Azul Escuro (Fica mais elegante que preto puro)
-
     return AppBar(
-      backgroundColor: Colors.white,
+      backgroundColor:
+          AppColors.background, // Branco para manter o visual limpo
       elevation: 0, // Remove a sombra padrão para ficar flat e limpo
       centerTitle: false,
 
@@ -40,7 +36,9 @@ class MyRoadieAppBar extends StatelessWidget implements PreferredSizeWidget {
           IconButton(
             icon: const Icon(Icons.calendar_today),
             // Lógica ternária: Se for 'calendar' usa laranja, senão usa azul escuro
-            color: selectedScreen == 'calendar' ? activeColor : inactiveColor,
+            color: selectedScreen == 'calendar'
+                ? AppColors.primary
+                : AppColors.secondary,
             tooltip: 'Agenda',
             onPressed: () {
               // Use context.go('/') para "trocar" de aba raiz, em vez de empilhar
@@ -53,7 +51,9 @@ class MyRoadieAppBar extends StatelessWidget implements PreferredSizeWidget {
           // 2. Ícone Perfil
           IconButton(
             icon: const Icon(Icons.person),
-            color: selectedScreen == 'profile' ? activeColor : inactiveColor,
+            color: selectedScreen == 'profile'
+                ? AppColors.primary
+                : AppColors.secondary,
             tooltip: 'Meu Perfil',
             onPressed: () {
               // Use push se quiser que tenha botão de voltar, ou go se for uma aba fixa
@@ -74,7 +74,8 @@ class MyRoadieAppBar extends StatelessWidget implements PreferredSizeWidget {
           // 4. Ícone Logout
           IconButton(
             icon: const Icon(Icons.logout),
-            color: inactiveColor, // Logout geralmente não fica "selecionado"
+            color:
+                AppColors.secondary, // Logout geralmente não fica "selecionado"
             tooltip: 'Sair',
             onPressed: () {
               // context.go('/login') limpa o histórico de navegação

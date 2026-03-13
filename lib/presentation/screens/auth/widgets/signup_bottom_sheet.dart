@@ -1,4 +1,4 @@
-import 'package:agenda_musical/presentation/theme/app_colors.dart';
+import 'package:agenda_musical/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -13,7 +13,7 @@ class SignupBottomSheet extends StatelessWidget {
     return Container(
       padding: EdgeInsets.fromLTRB(24, 24, 24, bottomPadding + 24),
       decoration: const BoxDecoration(
-        color: Colors.white,
+        color: AppColors.background, // Cor de fundo do modal
         borderRadius: BorderRadius.vertical(top: Radius.circular(32)),
       ),
       child: SingleChildScrollView(
@@ -83,7 +83,7 @@ class SignupBottomSheet extends StatelessWidget {
                 child: const Text(
                   'CADASTRAR',
                   style: TextStyle(
-                    color: Colors.white,
+                    color: AppColors.textLight,
                     fontWeight: FontWeight.bold,
                   ),
                 ),

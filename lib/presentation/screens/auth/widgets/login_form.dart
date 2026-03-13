@@ -1,4 +1,4 @@
-import 'package:agenda_musical/presentation/theme/app_colors.dart';
+import 'package:agenda_musical/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -97,7 +97,7 @@ class _LoginFormState extends State<LoginForm> {
               child: const Text(
                 'ENTRAR',
                 style: TextStyle(
-                  color: Colors.white,
+                  color: AppColors.background,
                   fontWeight: FontWeight.bold,
                   fontSize: 16,
                 ),
