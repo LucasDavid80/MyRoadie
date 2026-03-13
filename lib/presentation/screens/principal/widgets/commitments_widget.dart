@@ -1,6 +1,6 @@
+import 'package:agenda_musical/core/constants/app_colors.dart';
 import 'package:agenda_musical/domain/entities/event_entity.dart';
 import 'package:agenda_musical/presentation/screens/principal/widgets/commitment_card.dart';
-import 'package:agenda_musical/presentation/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
