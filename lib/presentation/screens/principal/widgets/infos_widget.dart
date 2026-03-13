@@ -1,3 +1,4 @@
+import 'package:agenda_musical/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class InfosWidget extends StatelessWidget {
@@ -25,13 +26,13 @@ class InfosWidget extends StatelessWidget {
               "Este Mês",
               compromissosTotal.toString(),
               Icons.event,
-              Color(0xFF3B82F6),
+              AppColors.cardBlue,
             ),
             infoCard(
               "Próximos",
               proximosCompromissos.toString(),
               Icons.check_circle,
-              Color(0xFF10B981),
+              AppColors.cardGreen,
             ),
           ],
         ),
@@ -43,13 +44,13 @@ class InfosWidget extends StatelessWidget {
               "Shows/Mês",
               shows.toString(),
               Icons.music_note,
-              Color(0xFFF59E0B),
+              AppColors.primary, // Usando a cor primária do tema
             ),
             infoCard(
               "Cachê/Mês",
               faturamento.toString(),
               Icons.attach_money,
-              Color(0xFF8B5CF6),
+              AppColors.cardPurple,
             ),
           ],
         ),
@@ -61,9 +62,9 @@ class InfosWidget extends StatelessWidget {
 Widget infoCard(String title, String description, IconData icon, Color color) {
   return Card(
     // 1. Força o fundo a ser Branco
-    color: Colors.white,
+    color: AppColors.background, // Usando a cor de fundo do tema
     // 2. Remove a "sujeira" (tint) cinza/azulada causada pela sombra no Material 3
-    surfaceTintColor: Colors.white,
+    surfaceTintColor: AppColors.textLight,
 
     elevation: 2, // Opcional: controla o tamanho da sombra
     shape: RoundedRectangleBorder(

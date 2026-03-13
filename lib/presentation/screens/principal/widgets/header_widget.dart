@@ -1,3 +1,4 @@
+import 'package:agenda_musical/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class HeaderWidget extends StatelessWidget {
@@ -14,10 +15,10 @@ class HeaderWidget extends StatelessWidget {
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(8),
-              color: Colors.white,
+              color: AppColors.background,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.05),
+                  color: AppColors.black.withOpacity(0.05),
                   blurRadius: 10,
                   offset: const Offset(0, 4),
                 ),
@@ -43,7 +44,7 @@ class HeaderWidget extends StatelessWidget {
                 style: TextStyle(
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xFF2c3e50), // Azul escuro da marca
+                  color: AppColors.secondary, // Azul escuro da marca
                 ),
               ),
               Text(

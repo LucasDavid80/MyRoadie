@@ -1,3 +1,4 @@
+import 'package:agenda_musical/core/constants/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class PhotoWidget extends StatelessWidget {
@@ -10,10 +11,10 @@ class PhotoWidget extends StatelessWidget {
       padding: EdgeInsets.all(16),
       decoration: BoxDecoration(
         shape: BoxShape.rectangle,
-        color: Colors.white,
+        color: AppColors.background,
         boxShadow: [
           BoxShadow(
-            color: Colors.grey.withOpacity(0.05),
+            color: AppColors.textGrey.withOpacity(0.05),
             spreadRadius: 2,
             blurRadius: 5,
             offset: Offset(0, 3),
@@ -42,12 +43,16 @@ class PhotoWidget extends StatelessWidget {
                 width: 120,
                 height: 120,
                 decoration: BoxDecoration(
-                  color: Color(0xFFf59e0b),
+                  color: AppColors.primary.withOpacity(0.1),
                   shape: BoxShape.rectangle,
-                  border: Border.all(color: Color(0xFFf59e0b), width: 2),
+                  border: Border.all(color: AppColors.primary, width: 2),
                   borderRadius: BorderRadius.all(Radius.circular(12)),
                 ),
-                child: Icon(Icons.music_note, size: 60, color: Colors.white),
+                child: Icon(
+                  Icons.music_note,
+                  size: 60,
+                  color: AppColors.background,
+                ),
               ),
               Column(
                 children: [
@@ -56,14 +61,14 @@ class PhotoWidget extends StatelessWidget {
                       // Ação para alterar a foto
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFFf59e0b),
+                      backgroundColor: AppColors.primary,
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.upload, color: Colors.white),
+                        Icon(Icons.upload, color: AppColors.background),
                         Text(
                           "Enviar Foto",
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: AppColors.background),
                         ),
                       ],
                     ),

@@ -1,4 +1,6 @@
+import 'package:agenda_musical/core/constants/app_colors.dart';
 import 'package:agenda_musical/domain/models/event_model.dart';
+import 'package:agenda_musical/presentation/controllers/agenda_controller.dart';
 import 'package:agenda_musical/presentation/screens/principal/widgets/commitments_widget.dart';
 import 'package:agenda_musical/presentation/screens/principal/widgets/custom_calendar.dart';
 import 'package:agenda_musical/presentation/screens/principal/widgets/header_widget.dart';
@@ -6,70 +8,26 @@ import 'package:agenda_musical/presentation/screens/principal/widgets/infos_widg
 import 'package:agenda_musical/presentation/widgets/my_roadie_app_bar.dart';
 import 'package:agenda_musical/presentation/widgets/new_appointment_widget.dart'; // Importe o modal
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // 1. Mudamos para StatefulWidget para poder atualizar a lista
-class PrincipalScreen extends StatefulWidget {
+class PrincipalScreen extends ConsumerWidget {
   const PrincipalScreen({super.key});
 
   @override
-  State<PrincipalScreen> createState() => _PrincipalScreenState();
-}
+  // O build agora recebe o 'WidgetRef ref' (que é o controle remoto do Riverpod)
+  Widget build(BuildContext context, WidgetRef ref) {
+    // 1. "Observa" a lista de eventos (se o controller mudar, aqui reconstrói)
+    final events = ref.watch(agendaProvider);
 
-class _PrincipalScreenState extends State<PrincipalScreen> {
-  // 1. A lista agora é tipada! Adeus Map<String, dynamic>
-  List<EventModel> events = [
-    EventModel(
-      id: '1',
-      title: "Carnaval cxb",
-      startTime: "19:00",
-      endTime: "21:00",
-      location: "Calçadão",
-      fee: 3000.0,
-      date: DateTime(2026, 2, 12),
-      type: "Show",
-    ),
-  ];
+    // 2. Pega os cálculos do controller
+    final totalFee = ref.read(agendaProvider.notifier).totalFee;
+    // final totalFee = ref.watch(agendaProvider.notifier).totalFee; // Se totalFee for um Provider separado, use watch. Se for um método, use read.
+    final showsCount = ref.read(agendaProvider.notifier).monthlyShows;
 
-  // 2. Função de adicionar recebe o objeto
-  void _addNewEvent(EventModel newEvent) {
-    setState(() {
-      events.add(newEvent);
-    });
-  }
-
-  // 3. Cálculos muito mais seguros (sem ['fee'] que pode dar erro)
-  double calcFee() {
-    // fold é um jeito chique de somar lista
-    return events.fold(0.0, (sum, event) => sum + event.fee);
-  }
-
-  int calcShows() {
-    final now = DateTime.now();
-    // Olha como ficou legível acessar .date e .month!
-    return events
-        .where(
-          (event) =>
-              event.date.month == now.month && event.date.year == now.year,
-        )
-        .length;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    // Função para lidar com salvar (Novo ou Edição)
-    void _handleEvent(EventModel eventData) {
-      setState(() {
-        // Procura se já existe um evento com esse ID na lista
-        final index = events.indexWhere((e) => e.id == eventData.id);
-
-        if (index != -1) {
-          // Se achou (index diferente de -1), é EDIÇÃO: substitui o antigo pelo novo
-          events[index] = eventData;
-        } else {
-          // Se não achou, é NOVO: adiciona na lista
-          events.add(eventData);
-        }
-      });
+    // 3. Criamos uma função simples para os widgets filhos chamarem o controller
+    void handleOnConfirm(newEvent) {
+      ref.read(agendaProvider.notifier).addOrUpdateEvent(newEvent);
     }
 
     return Scaffold(
@@ -77,18 +35,20 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
 
       // 4. Botão Flutuante para Adicionar
       floatingActionButton: FloatingActionButton(
-        backgroundColor: const Color(0xFFf59e0b), // Laranja
-        child: const Icon(Icons.add, color: Colors.white),
+        backgroundColor: AppColors.primary, // Laranja
+        child: const Icon(
+          Icons.add,
+          color: AppColors.textLight,
+        ), // Ícone branco
         onPressed: () {
-          // Abre o Modal como Dialog
           showDialog(
             context: context,
             builder: (context) => Dialog(
-              backgroundColor: Colors.transparent,
-              insetPadding: const EdgeInsets.all(16),
               child: NewAppointmentWidget(
-                event: null, // Opcional, pode nem passar esse parâmetro
-                onConfirm: _handleEvent, // Usa a mesma função
+                onConfirm: (newEvent) {
+                  // Aqui a mágica acontece: avisamos o motor para adicionar o evento
+                  ref.read(agendaProvider.notifier).addOrUpdateEvent(newEvent);
+                },
               ),
             ),
           );
@@ -115,19 +75,17 @@ class _PrincipalScreenState extends State<PrincipalScreen> {
             InfosWidget(
               compromissosTotal: events.length,
               compromissosConcluidos: 0,
-              shows: calcShows(),
-              faturamento: calcFee(),
+              shows: showsCount,
+              faturamento: totalFee,
             ),
 
-            CustomCalendar(events: events),
+            CustomCalendar(events: events), // <-- Passando a lista observada
 
-            // A lista de cards atualiza quando 'events' muda
             CommitmentsWidget(
-              commitments: events,
-              onConfirm: _handleEvent, // Usa a mesma função
+              commitments: events, // <-- Passando a lista observada
+              onConfirm: handleOnConfirm, // <-- Passando a função do controller
             ),
 
-            // Espaço extra pro botão flutuante não tampar o último card
             const SizedBox(height: 80),
           ],
         ),

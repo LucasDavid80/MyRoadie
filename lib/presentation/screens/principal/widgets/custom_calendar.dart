@@ -1,11 +1,12 @@
-import 'package:agenda_musical/domain/models/event_model.dart';
+import 'package:agenda_musical/core/constants/app_colors.dart';
+import 'package:agenda_musical/domain/entities/event_entity.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class CustomCalendar extends StatefulWidget {
   // Recebe a lista de eventos da tela principal
-  final List<EventModel> events;
+  final List<EventEntity> events;
 
   const CustomCalendar({
     super.key,
@@ -21,7 +22,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
   DateTime? _selectedDay;
 
   /// No filtro _getEventsForDay, não precisa mais de DateTime.parse:
-  List<EventModel> _getEventsForDay(DateTime day) {
+  List<EventEntity> _getEventsForDay(DateTime day) {
     return widget.events.where((event) {
       return isSameDay(event.date, day); // Muito mais simples!
     }).toList();
@@ -32,7 +33,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
     return Container(
       margin: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.background,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: Colors.grey.shade300),
       ),
@@ -66,15 +67,15 @@ class _CustomCalendarState extends State<CustomCalendar> {
 
             calendarStyle: CalendarStyle(
               todayDecoration: const BoxDecoration(
-                color: Color(0xFFf59e0b), // Laranja
+                color: AppColors.primary, // Laranja
                 shape: BoxShape.circle,
               ),
               todayTextStyle: const TextStyle(
-                color: Colors.white,
+                color: AppColors.background,
                 fontWeight: FontWeight.bold,
               ),
               selectedDecoration: BoxDecoration(
-                color: const Color(0xFFf59e0b).withOpacity(0.5),
+                color: AppColors.primary.withOpacity(0.5),
                 shape: BoxShape.circle,
               ),
               outsideDaysVisible: true,
@@ -99,7 +100,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
                         width: 8, // Bolinha menor fica mais elegante
                         height: 8,
                         decoration: const BoxDecoration(
-                          color: Color(0xFFf59e0b), // Laranja
+                          color: AppColors.primary, // Laranja
                           shape: BoxShape
                               .circle, // Mudei para círculo (padrão Google Calendar)
                         ),
@@ -127,7 +128,7 @@ class _CustomCalendarState extends State<CustomCalendar> {
           style: const TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF2c3e50),
+            color: AppColors.secondary,
           ),
         ),
         Row(
